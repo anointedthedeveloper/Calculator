@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Buggy Calculator</title>
+    <title>Fixed Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,6 +69,14 @@
         .equals:hover {
             background-color: #42a5f5;
         }
+        
+        .fixed-badge {
+            color: #4caf50;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -88,19 +96,19 @@
             <button onclick="appendToDisplay('4')">4</button>
             <button onclick="appendToDisplay('5')">5</button>
             <button onclick="appendToDisplay('6')">6</button>
-            <button onclick="subtractBug()" style="background-color: #ff4444;">-</button>
+            <button onclick="appendToDisplay('-')" class="operator">-</button>
             
             <button onclick="appendToDisplay('1')">1</button>
             <button onclick="appendToDisplay('2')">2</button>
             <button onclick="appendToDisplay('3')">3</button>
-            <button onclick="multiplyBug()" style="background-color: #ff4444;">×</button>
+            <button onclick="appendToDisplay('*')" class="operator">×</button>
             
-            <button onclick="appendToDisplay('0')" colspan="2">0</button>
+            <button onclick="appendToDisplay('0')" style="grid-column: span 2;">0</button>
             <button onclick="appendToDisplay('.')">.</button>
             <button onclick="calculate()" class="equals">=</button>
         </div>
-        <div style="color: #ff6b6b; margin-top: 10px; font-size: 14px; text-align: center;">
-            ⚠️ Warning: Addition button works fine, but Subtraction and Multiplication have bugs!
+        <div class="fixed-badge">
+            ✅ All bugs fixed! All operations work correctly now.
         </div>
     </div>
 
@@ -113,25 +121,6 @@
             document.getElementById('display').value = '';
         }
         
-        // BUG IN SUBTRACTION: This subtracts in reverse order
-        function subtractBug() {
-            let currentValue = document.getElementById('display').value;
-            // Bug: Will subtract from 0 instead of using the current value
-            document.getElementById('display').value = '0-';
-        }
-        
-        // BUG IN MULTIPLICATION: This multiplies by 2 instead of the actual calculation
-        function multiplyBug() {
-            let currentValue = document.getElementById('display').value;
-            // Bug: Will always multiply whatever is displayed by 2
-            if (currentValue) {
-                let result = parseFloat(currentValue) * 2;
-                document.getElementById('display').value = result + '×';
-            } else {
-                document.getElementById('display').value = '×';
-            }
-        }
-        
         function calculate() {
             try {
                 let expression = document.getElementById('display').value;
@@ -139,19 +128,33 @@
                 // Replace × with * for evaluation
                 expression = expression.replace(/×/g, '*');
                 
-                // BUG IN ADDITION: Actually, addition works fine! The bugs are in subtraction and multiplication
-                // But let's add a subtle bug: If the result is 42, show a funny message
+                // Fixed: Now properly evaluates all expressions
                 let result = eval(expression);
                 
-                if (result === 42) {
-                    document.getElementById('display').value = "42 (The answer to everything!)";
-                } else {
-                    document.getElementById('display').value = result;
-                }
+                // Fixed: Removed the 42 special case, now shows normal results
+                document.getElementById('display').value = result;
+                
             } catch (error) {
                 document.getElementById('display').value = 'Error';
             }
         }
+        
+        // Optional: Add keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (/[0-9]/.test(key)) {
+                appendToDisplay(key);
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                appendToDisplay(key);
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape') {
+                clearDisplay();
+            } else if (key === '.') {
+                appendToDisplay('.');
+            }
+        });
     </script>
 </body>
 </html>
